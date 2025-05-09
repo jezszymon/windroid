@@ -1,8 +1,27 @@
-pkg update && pkg upgrade
-pkg install x11-repo
-pkg install tigervnc xterm
-pkg install kde-plasma-desktop
-pkg install wine
-pkg install konsole kate dolphin
-winecfg
+# 1. Aktualizacja systemu
+pkg update && pkg upgrade -y
+
+# 2. Instalacja niezbędnych repozytoriów i pakietów
+pkg install x11-repo -y
+pkg install tigervnc kde-plasma xterm wine konsole dolphin kate -y
+
+# 3. Konfiguracja VNC (zatrzymaj jeśli już działa)
+vncserver -kill :1 2>/dev/null
+
+# 4. Tworzenie pliku startowego dla KDE Plasma
+mkdir -p ~/.vnc
+cat > ~/.vnc/xstartup << 'EOF'
+#!/data/data/com.termux/files/usr/bin/sh
+export DISPLAY=:1
+dbus-launch startplasma-x11 &
+EOF
+
+# 5. Nadanie uprawnień do uruchamiania
+chmod +x ~/.vnc/xstartup
+
+# 6. Uruchomienie serwera VNC
 vncserver
+
+# 7. Wyświetlenie informacji o dostępie
+echo ""
+echo ":)"
